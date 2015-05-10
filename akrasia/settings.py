@@ -26,6 +26,47 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+	'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'applogfile': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(PROJECT_ROOT, 'akrasia.log'),
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+	'akrasia': {
+            'handlers': ['applogfile',],
+            'level': 'DEBUG',
+        },
+    }
+}
 
 # Application definition
 
@@ -51,7 +92,7 @@ ROOT_URLCONF = 'akrasia.urls'
 
 WSGI_APPLICATION = 'akrasia.wsgi.application'
 
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -59,8 +100,6 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, '/home/astinx/dev/python_workspace/akrasia-server/akrasia/templates').replace('\\','/'),
 )
-
-
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

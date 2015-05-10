@@ -4,6 +4,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from akrasia_messages.models import Message
 from akrasia_messages.serializers import MessageSerializer
+from rest_framework.response import Response
 
 class JSONResponse(HttpResponse):
     """
