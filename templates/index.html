@@ -49,6 +49,8 @@ div.reply {
 <body>
 <a>Hello Güorld!</a>
 <div>
+	<div>
+
 	<div style="display:block">
 		<input type="text" placeholder="Username" id="username-input"/>
 		<input type="text" placeholder="Url de una foto (.gif, .jpg, .png, .faggot)" id="profile-input"/>
@@ -59,9 +61,11 @@ div.reply {
 		<input type="button" value="Enviar!" id="send-btn" />	
 	</div>
 
+	</div>
+
 	<div id="thread">
 
-<div class="postContainer replyContainer" id="pc614779620"><div class="sideArrows" id="sa614779620">&gt;&gt;</div><div id="p614779620" class="post reply"><div class="postInfoM mobile" id="pim614779620"><span class="nameBlock"><span class="name">Anonymous</span><br></span><span class="dateTime postNum" data-utc="1431215216">05/09/15(Sat)19:46:56 <a href="thread/614777374#p614779620" title="Link to this post">No.</a><a href="thread/614777374#q614779620" title="Reply to this post">614779620</a></span></div><div class="postInfo desktop" id="pi614779620"><input name="614779620" value="delete" type="checkbox"> <span class="nameBlock"><span class="name">Anonymous</span> </span> <span class="dateTime" data-utc="1431215216">05/09/15(Sat)20:46:56</span> <span class="postNum desktop"><a href="thread/614777374#p614779620" title="Link to this post">No.</a><a href="thread/614777374#q614779620" title="Reply to this post">614779620</a></span><a data-cmd="post-menu" title="Post menu" class="postMenuBtn" href="#">▶</a></div><blockquote class="postMessage" id="m614779620">Roll</blockquote></div></div>
+		
 
 
 
@@ -71,11 +75,61 @@ div.reply {
 </div>
 </body>
 <script>
+		
+
+    // Simple JavaScript Templating
+    // John Resig - http://ejohn.org/ - MIT Licensed
+    (function(){
+      var cache = {};
+     
+      this.tmpl = function tmpl(str, data){
+        // Figure out if we're getting a template, or if we need to
+        // load the template - and be sure to cache the result.
+        var fn = !/\W/.test(str) ?
+          cache[str] = cache[str] ||
+            tmpl(document.getElementById(str).innerHTML) :
+         
+          // Generate a reusable function that will serve as a template
+          // generator (and which will be cached).
+          new Function("obj",
+            "var p=[],print=function(){p.push.apply(p,arguments);};" +
+           
+            // Introduce the data as local variables using with(){}
+            "with(obj){p.push('" +
+           
+            // Convert the template into pure JavaScript
+            str
+              .replace(/[\r\t\n]/g, " ")
+              .split("<%").join("\t")
+              .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+              .replace(/\t=(.*?)%>/g, "',$1,'")
+              .split("\t").join("');")
+              .split("%>").join("p.push('")
+              .split("\r").join("\\'")
+          + "');}return p.join('');");
+       
+        // Provide some basic currying to the user
+        return data ? fn( data ) : fn;
+      };
+    })();
+
+
+
+
+	var template = '<div class="post reply"><div><span><span class="name"><img src="<%=urlprofile%>" style="width:100px;height:100px;"><%=name%></span><br></span></div><blockquote style="width: 39%;"><%=message%></blockquote></div>';
+
 	var HOST = "http://127.0.0.1:8000/api";
+
+	setInterval(function(){ loadMessages(); }, 3000);
 
 	function loadMessages() {
 			$.get(HOST + "/messages/", function(data) {
-						
+				$("#thread").empty();
+				for (var i = data.length-1; i > 0; i--) {
+					var json_message = data[i];					
+					var result = tmpl(template, json_message);
+					$("#thread").append(result);		
+				}			
 			}
 		);	
 	}	
